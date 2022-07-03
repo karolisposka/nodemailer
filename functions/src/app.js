@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const { port, nodeMailerConfig } = require("./config");
+const functions = require("firebase-functions");
+const { nodeMailerConfig } = require("./config");
 const mailer = require("nodemailer");
 const app = express();
 app.use(cors());
@@ -32,7 +33,7 @@ app.post("/", async (req, res) => {
   try {
     if (req.body.email && req.body.text) {
       await sendEmail(req.body.email, req.body.text);
-      return res.send({ msg: "email is send" });
+      return res.send({ msg: "email sent" });
     }
     return res
       .status(500)
@@ -44,6 +45,4 @@ app.post("/", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`server is running on ${port} port`);
-});
+exports.app = functions.https.onRequest(app);
